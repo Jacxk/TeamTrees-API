@@ -10,12 +10,26 @@ I donated and I got proof 👀:\
 ![proof](https://i.imgur.com/PfdZeti.png)
 
 ### Usage
-You can find the file test [here](https://github.com/Jacxk/TeamTrees-API/blob/master/test.js).
+You can find the file test [here](https://github.com/Jacxk/TeamTrees-API/blob/master/test.js).\
+This package comes with a rate limiter and a cache system so you dont break the website by making 1,000 requests.
+You can disable it but I don't recommend it.
+
+Options:
+```js
+// they are all optional
+{
+  rateLimit: true // enable rate limiter
+  cache: {
+    enable: true, // enable the cache syste,
+    duration: 5 // time to hold the data in minutes
+  }
+}
+```
 
 Initialize:
 ```js
 const API = require('./dist/');
-const teamTrees = new API.TeamTrees();
+const teamTrees = new API.TeamTrees(/* options */);
 ```
 
 Methods:
