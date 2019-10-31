@@ -1,5 +1,7 @@
 # TeamTrees-API
 
+[![NPM](https://nodei.co/npm/teamtrees-api.png)](https://www.npmjs.com/package/teamtrees-api)
+
 TeamTrees-API is the un-official API for [TeamTrees.org](https://teamtrees.org/)\
 With this package you can get information such as the amount of money donated, recent donations
 and see if Treelon (AKA Elon Musk) is #1.
