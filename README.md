@@ -6,7 +6,7 @@ and see if Treelon (AKA Elon Musk) is #1.
 
 If you haven't donated yet, please do, and share the website. We gotta hit the 20M by 2020.
 
-I donated and I got proof:
+I donated and I got proof 👀:\
 ![proof](https://i.imgur.com/PfdZeti.png)
 
 ### Usage
