@@ -5,22 +5,20 @@ export class TeamTrees {
     private readonly _rateLimit: boolean | undefined;
     private readonly _cache: { enable?: boolean; duration?: number };
     private _retryIn: number;
-    private _data: string | null;
+    private _data: Promise<string>;
 
     constructor(opt: { rateLimit?: boolean, cache?: { enable?: boolean, duration?: number } } =
-                    {rateLimit: true, cache: {enable: false, duration: 1}}) {
-        this._cache = opt.cache || {enable: false, duration: 1};
+                    {rateLimit: false, cache: {enable: true, duration: 5}}) {
+        this._cache = opt.cache || {enable: false, duration: 5};
         this._rateLimit = opt.rateLimit;
-        this._retryIn = this._cache.duration || Date.now();
-        this._data = null;
-
-        if (this._cache && this._cache.enable) this.loadCache();
+        this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
+        this._data = this.getBody();
     }
 
-    public async getTotalTrees(formatted: boolean = false): Promise<number | string> {
-        this.assert();
+    public async getTotalTrees(formatted?: boolean): Promise<number | string> {
+        await this.assert();
 
-        const body = this._data || await this.getBody();
+        const body = await this._data;
 
         if (body == null) throw "There was a error while getting the data";
 
@@ -32,9 +30,9 @@ export class TeamTrees {
     }
 
     public async getMostRecent(): Promise<Array<object>> {
-        this.assert();
+        await this.assert();
 
-        const body = this._data || await this.getBody();
+        const body = await this._data;
 
         if (body == null) throw "There was a error while getting the data";
 
@@ -47,9 +45,9 @@ export class TeamTrees {
     }
 
     public async getMostTrees(): Promise<Array<object>> {
-        this.assert();
+        await this.assert();
 
-        const body = await this.getBody();
+        const body = await this._data;
 
         if (body == null) throw "There was a error while getting the data";
 
@@ -76,13 +74,14 @@ export class TeamTrees {
     }
 
     private async loadCache(): Promise<void> {
-        this._data = await this.getBody();
+        this._data = this.getBody();
+        this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
     }
 
-    private assert() {
+    private async assert() {
         if (!this._cache.enable) {
             if (this._rateLimit && this._retryIn > Date.now()) throw "Too many requests!";
             else this._retryIn = Date.now() + (1000 * 30);
-        } else if (this._retryIn < Date.now()) this.loadCache();
+        } else if (this._cache.enable && Date.now() > this._retryIn) this.loadCache();
     }
 }

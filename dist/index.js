@@ -15,18 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 const node_fetch_1 = __importDefault(require("node-fetch"));
 class TeamTrees {
-    constructor(opt = { rateLimit: true, cache: { enable: false, duration: 1 } }) {
-        this._cache = opt.cache || { enable: false, duration: 1 };
+    constructor(opt = { rateLimit: false, cache: { enable: true, duration: 5 } }) {
+        this._cache = opt.cache || { enable: false, duration: 5 };
         this._rateLimit = opt.rateLimit;
-        this._retryIn = this._cache.duration || Date.now();
-        this._data = null;
-        if (this._cache && this._cache.enable)
-            this.loadCache();
+        this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
+        this._data = this.getBody();
     }
-    getTotalTrees(formatted = false) {
+    getTotalTrees(formatted) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.assert();
-            const body = this._data || (yield this.getBody());
+            yield this.assert();
+            const body = yield this._data;
             if (body == null)
                 throw "There was a error while getting the data";
             const regex = /<div id="totalTrees" class="counter" data-count="\d+">/g;
@@ -39,8 +37,8 @@ class TeamTrees {
     }
     getMostRecent() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.assert();
-            const body = this._data || (yield this.getBody());
+            yield this.assert();
+            const body = yield this._data;
             if (body == null)
                 throw "There was a error while getting the data";
             const regex = /<div class="media pt-3">(.*?)<\/div>/gms;
@@ -53,8 +51,8 @@ class TeamTrees {
     }
     getMostTrees() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.assert();
-            const body = yield this.getBody();
+            yield this.assert();
+            const body = yield this._data;
             if (body == null)
                 throw "There was a error while getting the data";
             const regex = /<div class="media pt-3" data-trees-top="(\d+)">(.*?)<\/div>/gms;
@@ -79,18 +77,21 @@ class TeamTrees {
     }
     loadCache() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._data = yield this.getBody();
+            this._data = this.getBody();
+            this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
         });
     }
     assert() {
-        if (!this._cache.enable) {
-            if (this._rateLimit && this._retryIn > Date.now())
-                throw "Too many requests!";
-            else
-                this._retryIn = Date.now() + (1000 * 30);
-        }
-        else if (this._retryIn < Date.now())
-            this.loadCache();
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._cache.enable) {
+                if (this._rateLimit && this._retryIn > Date.now())
+                    throw "Too many requests!";
+                else
+                    this._retryIn = Date.now() + (1000 * 30);
+            }
+            else if (this._cache.enable && Date.now() > this._retryIn)
+                this.loadCache();
+        });
     }
 }
 exports.TeamTrees = TeamTrees;
