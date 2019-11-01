@@ -20,6 +20,24 @@ class TeamTrees {
         this._rateLimit = opt.rateLimit;
         this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
         this._data = this.getBody();
+        this._maxTrees = 20000000;
+        this._endDate = new Date(2020, 0, 1).getTime();
+    }
+    getLeft() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.assert();
+            const totalTrees = parseInt(yield this.getTotalTrees());
+            return {
+                daysLeft: parseInt(((this._endDate - Date.now()) / (1000 * 60 * 60 * 24)).toFixed()),
+                treesLeft: {
+                    amount: {
+                        fixed: (this._maxTrees - totalTrees).toLocaleString(),
+                        value: this._maxTrees - totalTrees
+                    },
+                    percent: ((totalTrees / this._maxTrees) * 100).toFixed(2)
+                }
+            };
+        });
     }
     getTotalTrees(formatted) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,9 +48,9 @@ class TeamTrees {
             const regex = /<div id="totalTrees" class="counter" data-count="\d+">/g;
             const total_trees = ((body.match(regex) || [])[0].match(/\d+/g) || [])[0];
             if (formatted)
-                return total_trees.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
+                return total_trees.toLocaleString();
             else
-                return parseInt(total_trees);
+                return total_trees;
         });
     }
     getMostRecent() {

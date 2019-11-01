@@ -16,7 +16,7 @@ You can find the file test [here](https://github.com/Jacxk/TeamTrees-API/blob/ma
 This package comes with a rate limiter and a cache system so you dont break the website by making 1,000 requests.
 You can disable it but I don't recommend it.
 
-Options:
+### Options:
 ```js
 // they are all optional
 {
@@ -28,13 +28,13 @@ Options:
 }
 ```
 
-Initialize:
+### Initialize:
 ```js
-const API = require('./dist/');
-const teamTrees = new API.TeamTrees(/* options */);
+const {TeamTrees} = require('teamtrees-api');
+const teamTrees = new TeamTrees(/* options */);
 ```
 
-Methods:
+### Methods:
 ```js
 // Get all total donation amount
 teamTrees.getTotalTrees(true).then(console.log); // 10,048,199
@@ -72,5 +72,22 @@ teamTrees.getMostTrees().then(console.log);
   }
   ...
 ]
+*/
+
+// I suck at naming btw
+// Get the days left and trees left
+// Thanks to @subgap (https://twitter.com/subgap) for the idea
+teamTrees.getLeft().then(console.log)
+
+/* OutPut
+{
+  "daysLeft": 60,
+  "treesLeft": {
+    "amount": {
+      "fixed": '8,602,253',
+      "value": 8602253
+    },
+    "percent": '56.99'
+  }
 */
 ```

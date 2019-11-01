@@ -1,5 +1,5 @@
-const API = require('./dist/');
-const teamTrees = new API.TeamTrees();
+const {TeamTrees} = require('./dist/');
+const teamTrees = new TeamTrees();
 
 // Get all total donation amount
 teamTrees.getTotalTrees(true).then(console.log);
@@ -9,3 +9,6 @@ teamTrees.getMostRecent().then(console.log);
 
 // Get the top donations (where Elon Musk is)
 teamTrees.getMostTrees().then(console.log);
+
+// Get days left and trees left... Awesome...
+teamTrees.getLeft().then(console.log)

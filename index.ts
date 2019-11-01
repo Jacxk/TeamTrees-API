@@ -6,6 +6,8 @@ export class TeamTrees {
     private readonly _cache: { enable?: boolean; duration?: number };
     private _retryIn: number;
     private _data: Promise<string>;
+    private readonly _maxTrees: number;
+    private readonly _endDate: number;
 
     constructor(opt: { rateLimit?: boolean, cache?: { enable?: boolean, duration?: number } } =
                     {rateLimit: false, cache: {enable: true, duration: 5}}) {
@@ -13,27 +15,44 @@ export class TeamTrees {
         this._rateLimit = opt.rateLimit;
         this._retryIn = Date.now() + ((this._cache.duration || 5) * 60 * 1000);
         this._data = this.getBody();
+        this._maxTrees = 20000000;
+        this._endDate = new Date(2020, 0, 1).getTime();
     }
 
-    public async getTotalTrees(formatted?: boolean): Promise<number | string> {
+    public async getLeft(): Promise<object> {
+        await this.assert();
+
+        const totalTrees = parseInt(await this.getTotalTrees());
+
+        return {
+            daysLeft: parseInt(((this._endDate - Date.now()) / (1000 * 60 * 60 * 24)).toFixed()),
+            treesLeft: {
+                amount: {
+                    fixed: (this._maxTrees - totalTrees).toLocaleString(),
+                    value: this._maxTrees - totalTrees
+                },
+                percent: ((totalTrees / this._maxTrees) * 100).toFixed(2)
+            }
+        };
+    }
+
+    public async getTotalTrees(formatted?: boolean): Promise<string> {
         await this.assert();
 
         const body = await this._data;
-
         if (body == null) throw "There was a error while getting the data";
 
         const regex: RegExp = /<div id="totalTrees" class="counter" data-count="\d+">/g;
         const total_trees: string = ((body.match(regex) || [])[0].match(/\d+/g) || [])[0];
 
-        if (formatted) return total_trees.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
-        else return parseInt(total_trees);
+        if (formatted) return total_trees.toLocaleString();
+        else return total_trees;
     }
 
     public async getMostRecent(): Promise<Array<object>> {
         await this.assert();
 
         const body = await this._data;
-
         if (body == null) throw "There was a error while getting the data";
 
         const regex: RegExp = /<div class="media pt-3">(.*?)<\/div>/gms;
@@ -48,7 +67,6 @@ export class TeamTrees {
         await this.assert();
 
         const body = await this._data;
-
         if (body == null) throw "There was a error while getting the data";
 
         const regex: RegExp = /<div class="media pt-3" data-trees-top="(\d+)">(.*?)<\/div>/gms;
