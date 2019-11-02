@@ -1,6 +1,6 @@
 {
   "name": "teamtrees-api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "a TeamTrees.org unofficial api to get the top, recent, and total donations.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

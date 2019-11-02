@@ -27,11 +27,12 @@ class TeamTrees {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.assert();
             const totalTrees = parseInt(yield this.getTotalTrees());
+            const fixed = String(this._maxTrees - totalTrees);
             return {
                 daysLeft: parseInt(((this._endDate - Date.now()) / (1000 * 60 * 60 * 24)).toFixed()),
                 treesLeft: {
                     amount: {
-                        fixed: (this._maxTrees - totalTrees).toLocaleString(),
+                        fixed: fixed.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,"),
                         value: this._maxTrees - totalTrees
                     },
                     percent: ((totalTrees / this._maxTrees) * 100).toFixed(2)
@@ -48,7 +49,7 @@ class TeamTrees {
             const regex = /<div id="totalTrees" class="counter" data-count="\d+">/g;
             const total_trees = ((body.match(regex) || [])[0].match(/\d+/g) || [])[0];
             if (formatted)
-                return total_trees.toLocaleString();
+                return total_trees.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
             else
                 return total_trees;
         });

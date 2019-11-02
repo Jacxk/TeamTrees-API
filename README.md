@@ -11,7 +11,7 @@ If you haven't donated yet, please do, and share the website. We gotta hit the 2
 I donated and I got proof 👀:\
 ![proof](https://i.imgur.com/PfdZeti.png)
 
-### Usage
+## Usage
 You can find the file test [here](https://github.com/Jacxk/TeamTrees-API/blob/master/test.js).\
 This package comes with a rate limiter and a cache system so you dont break the website by making 1,000 requests.
 You can disable it but I don't recommend it.

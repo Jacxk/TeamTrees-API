@@ -23,12 +23,13 @@ export class TeamTrees {
         await this.assert();
 
         const totalTrees = parseInt(await this.getTotalTrees());
+        const fixed = String(this._maxTrees - totalTrees);
 
         return {
             daysLeft: parseInt(((this._endDate - Date.now()) / (1000 * 60 * 60 * 24)).toFixed()),
             treesLeft: {
                 amount: {
-                    fixed: (this._maxTrees - totalTrees).toLocaleString(),
+                    fixed: fixed.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,"),
                     value: this._maxTrees - totalTrees
                 },
                 percent: ((totalTrees / this._maxTrees) * 100).toFixed(2)
@@ -45,7 +46,7 @@ export class TeamTrees {
         const regex: RegExp = /<div id="totalTrees" class="counter" data-count="\d+">/g;
         const total_trees: string = ((body.match(regex) || [])[0].match(/\d+/g) || [])[0];
 
-        if (formatted) return total_trees.toLocaleString();
+        if (formatted) return total_trees.replace(/\d{1,3}(?=(\d{3})+(?!\d))/g, "$&,");
         else return total_trees;
     }
 
