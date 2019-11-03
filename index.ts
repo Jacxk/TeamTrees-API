@@ -74,17 +74,19 @@ export class TeamTrees {
         const data = (body).match(regex) || [];
         const result: Array<object> = [];
 
-        for (let i = 0; i < data.length; i++) this.result(data, i, result);
+        for (let i = 0; i < data.length; i++) this.result(data, i, result, true);
         return result;
     }
 
-    private result(data: Array<any>, i: number, result: Array<object>): void {
+    private result(data: Array<any>, i: number, result: Array<object>, top?: boolean): void {
         const name = (data[i].match(/<strong.*?>(.*?)<\/strong>/m) || [])[1];
         const trees = (data[i].match(/<span.*?class="(feed-tree-count.*)">(.*) tree.*<\/span>/m) || [])[2];
         const message = (data[i].match(/<span.*?class="((?!feed-datetime|feed-tree-count).)*">(.*?)<\/span>/m) || [])[2];
         const date = (data[i].match(/<span.*?>(.*(\d+:\d+:\d+).*)<\/span>/m) || [])[1];
         const img = (data[i].match(/<img.*?src="(.*?)">/m) || [])[1];
-        result.push({name, trees, message, date: new Date(date), img: `https://teamtrees.org/${img}`})
+        const val = {name, trees, message, date: new Date(date), img: `https://teamtrees.org/${img}`};
+        if (top) Object.assign(val, {rank: i + 1});
+        result.push(val)
     }
 
     private getBody(): Promise<string> {

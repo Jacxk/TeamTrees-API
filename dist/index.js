@@ -78,17 +78,20 @@ class TeamTrees {
             const data = (body).match(regex) || [];
             const result = [];
             for (let i = 0; i < data.length; i++)
-                this.result(data, i, result);
+                this.result(data, i, result, true);
             return result;
         });
     }
-    result(data, i, result) {
+    result(data, i, result, top) {
         const name = (data[i].match(/<strong.*?>(.*?)<\/strong>/m) || [])[1];
         const trees = (data[i].match(/<span.*?class="(feed-tree-count.*)">(.*) tree.*<\/span>/m) || [])[2];
         const message = (data[i].match(/<span.*?class="((?!feed-datetime|feed-tree-count).)*">(.*?)<\/span>/m) || [])[2];
         const date = (data[i].match(/<span.*?>(.*(\d+:\d+:\d+).*)<\/span>/m) || [])[1];
         const img = (data[i].match(/<img.*?src="(.*?)">/m) || [])[1];
-        result.push({ name, trees, message, date: new Date(date), img: `https://teamtrees.org/${img}` });
+        const val = { name, trees, message, date: new Date(date), img: `https://teamtrees.org/${img}` };
+        if (top)
+            Object.assign(val, { rank: i + 1 });
+        result.push(val);
     }
     getBody() {
         // @ts-ignore
