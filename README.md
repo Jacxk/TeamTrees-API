@@ -68,7 +68,8 @@ teamTrees.getMostTrees().then(console.log);
     "trees": '1,000,000',
     "message": 'For Treebeard',
     "date": 2019-10-30T00:00:00.000Z,
-    "img": 'https://teamtrees.org/images/icon-badge-earth.svg'
+    "img": 'https://teamtrees.org/images/icon-badge-earth.svg',
+    "rank: 2
   }
   ...
 ]
